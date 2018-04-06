@@ -6,4 +6,4 @@ cp -r ../www/*  build/
 cp main.js build/
 cp package.json build/
 cd build
-electron .
+../node_modules/electron/dist/electron .
