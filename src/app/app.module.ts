@@ -38,7 +38,7 @@ import { PipesModule } from '../pipes/pipes.module';
 import { reducers, effects } from '../store';
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
-
+import { HttpClientModule } from '@angular/common/http';
 //providers
 import { HttpClientProvider } from '../providers/http-client/http-client';
 import { UserProvider } from '../providers/user/user';
@@ -74,6 +74,8 @@ import { TrackedEntityAttributeValuesProvider } from '../providers/tracked-entit
 import { EncryptionProvider } from '../providers/encryption/encryption';
 import { SmsGatewayProvider } from '../providers/sms-gateway/sms-gateway';
 import { ProgramRulesProvider } from '../providers/program-rules/program-rules';
+import { HttpWrapperProvider } from '../providers/http-wrapper/http-wrapper';
+import { SqliteWrapperProvider } from '../providers/sqlite-wrapper/sqlite-wrapper';
 
 @NgModule({
   declarations: [
@@ -90,6 +92,7 @@ import { ProgramRulesProvider } from '../providers/program-rules/program-rules';
     EffectsModule.forRoot(effects),
     IonicModule.forRoot(MyApp),
     HttpModule,
+    HttpClientModule,
     IonicStorageModule.forRoot(),
     TranslateModule.forRoot({
       loader: {
@@ -153,7 +156,9 @@ import { ProgramRulesProvider } from '../providers/program-rules/program-rules';
     LocalInstanceProvider,
     AppTranslationProvider,
     EncryptionProvider,
-    ProgramRulesProvider
+    ProgramRulesProvider,
+    HttpWrapperProvider,
+    SqliteWrapperProvider
   ]
 })
 export class AppModule {}
