@@ -1,5 +1,5 @@
-# Move files to build directory
-# cp hisptz-touch/platforms/browser/www/*  build/
+cd ..
+npm run ionic:build
 mkdir build
 cp -r ../www/*  build/
 cp main.js build/
