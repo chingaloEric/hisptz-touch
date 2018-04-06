@@ -11,6 +11,7 @@ import { CurrentUser } from '../../models/currentUser';
 import { EncryptionProvider } from '../encryption/encryption';
 import * as _ from 'lodash';
 import { NetworkAvailabilityProvider } from '../network-availability/network-availability';
+import {HttpWrapperProvider} from "../http-wrapper/http-wrapper";
 
 /*
   Generated class for the HttpClientProvider provider.
@@ -22,7 +23,7 @@ import { NetworkAvailabilityProvider } from '../network-availability/network-ava
 export class HttpClientProvider {
   public timeOutTime: number;
   constructor(
-    private http: HTTP,
+    private http: HttpWrapperProvider,
     private store: Store<ApplicationState>,
     private encryption: EncryptionProvider,
     private defaultHttp: Http,

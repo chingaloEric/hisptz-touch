@@ -1,0 +1,19 @@
+{
+  "name": "desktoptouch",
+  "version": "0.1.0",
+  "main": "main.js",
+  "script": {
+    "rebuild": "electron-rebuild -f -w sqlite3"
+  },
+  "devDependencies": {
+    "electron-packager": "^11.2.0",
+    "electron-rebuild": "^1.7.3"
+  },
+  "dependencies": {
+    "electron": "^1.8.4",
+    "electron-window-state": "^4.1.1",
+    "jquery": "^3.3.1",
+    "minimist": "^1.2.0",
+    "sqlite3": "^3.1.13"
+  }
+}

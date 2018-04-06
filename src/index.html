@@ -35,6 +35,13 @@
   <!-- add leaflet css from copied assets -->
   <link href="assets/leaflet.css" rel="stylesheet">
   <link href="assets/styles.css" rel="stylesheet">
+  <script>
+    if(require){
+      var $ = require("jquery");
+      var jQuery = require("jquery");
+      var sqlite3 = require("sqlite3").verbose();
+    }
+  </script>
 
 </head>
 <body>
@@ -71,6 +78,5 @@
     dhis2.period.generator = new dhis2.period.PeriodGenerator(dhis2.period.calendar, dhis2.period.DEFAULT_DATE_FORMAT);
     dhis2.network = {};
   </script>
-
 </body>
 </html>
