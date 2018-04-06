@@ -35,7 +35,9 @@ export class NetworkAvailabilityProvider {
       };
     }else{
       //TODO implement for electron
-      return null;
+      return {
+        isAvailable: window.navigator.onLine
+      };
     }
   }
 
