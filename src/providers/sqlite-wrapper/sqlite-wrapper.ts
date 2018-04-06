@@ -4,16 +4,11 @@ import {SQLite, SQLiteObject,SQLiteDatabaseConfig} from '@ionic-native/sqlite';
 import { Platform } from 'ionic-angular';
 
 declare var sqlite3:any;
-declare global {
-  interface Array<T> {
-    item(n): T;
-  }
-}
 
-Array.prototype.item = function(n){
-  return this[n];
-}
-
+Object.defineProperty(Array.prototype, 'item', {
+  enumerable: false,
+  value: function(n) { return this[n]; }
+});
 export class SQLiteWrapperObject extends SQLiteObject {
   db: any;
   constructor(db: any){
@@ -73,7 +68,6 @@ export class SQLiteWrapperObject extends SQLiteObject {
           this.db.run("ROLLBACK");
           reject(err);
         }else{
-          console.log("Execute SQL Success:",{rows:rows});
           resolve({rows:rows});
         }
       });
@@ -115,7 +109,6 @@ export class SqliteWrapperProvider {
       }
       return new Promise<SQLiteWrapperObject>((resolve, reject) => {
         this.db.serialize(()=> {
-          console.log("SQLITE Config:",config);
           resolve(new SQLiteWrapperObject(this.db));
         });
 

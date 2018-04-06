@@ -138,6 +138,15 @@ export class HttpWrapperProvider {
   post(url: string, body: any, headers: any): Promise<HTTPResponse>{
     if(this.isApp){
       return this.httpNative.post(url, body, headers);
+    }else{
+      return new Promise<HTTPResponse>((resolve, reject) => {
+        headers["Authorization"] = this.getBasicAuthHeader(this.username, this.password)["Authorization"];
+        this.http.post(url,body,{headers:headers,observe: 'response'}).subscribe((results:any)=>{
+          resolve(this.convertResults(results));
+        },(error)=>{
+          reject(this.convertError(error))
+        })
+      })
     }
   }
   /**
@@ -154,19 +163,24 @@ export class HttpWrapperProvider {
       return new Promise<HTTPResponse>((resolve, reject) => {
         headers["Authorization"] = this.getBasicAuthHeader(this.username, this.password)["Authorization"];
         this.http.get(url,{headers:headers,observe: 'response',params:parameters}).subscribe((results:any)=>{
-          resolve({status: results.status,headers:results.headers,data: JSON.stringify(results.body)});
-          //resolve(results);
+          resolve(this.convertResults(results));
         },(error)=>{
-          const keys = error.headers.keys();
-          let headers2 = {}
-          keys.forEach(key => {
-            console.log(error.headers[key]);
-            headers2[key] = error.headers.get(key);
-          });
-          reject({status: error.status,headers:headers2,error: error.message})
+          reject(this.convertError(error))
         })
       })
     }
+  }
+  convertResults(results){
+    return {status: results.status,headers:results.headers,data: JSON.stringify(results.body)};
+  }
+  convertError(error){
+    const keys = error.headers.keys();
+    let headers2 = {}
+    keys.forEach(key => {
+      console.log(error.headers[key]);
+      headers2[key] = error.headers.get(key);
+    });
+    return {status: error.status,headers:headers2,error: error.message};
   }
   /**
    * Make a PUT request
@@ -178,6 +192,15 @@ export class HttpWrapperProvider {
   put(url: string, body: any, headers: any): Promise<HTTPResponse>{
     if(this.isApp){
       return this.httpNative.put(url, body, headers);
+    }else{
+      return new Promise<HTTPResponse>((resolve, reject) => {
+        headers["Authorization"] = this.getBasicAuthHeader(this.username, this.password)["Authorization"];
+        this.http.put(url,body,{headers:headers,observe: 'response'}).subscribe((results:any)=>{
+          resolve(this.convertResults(results));
+        },(error)=>{
+          reject(this.convertError(error))
+        })
+      })
     }
   }
   /**
@@ -190,6 +213,15 @@ export class HttpWrapperProvider {
   patch(url: string, body: any, headers: any): Promise<HTTPResponse>{
     if(this.isApp){
       return this.httpNative.patch(url, body, headers);
+    }else{
+      return new Promise<HTTPResponse>((resolve, reject) => {
+        headers["Authorization"] = this.getBasicAuthHeader(this.username, this.password)["Authorization"];
+        this.http.patch(url,body,{headers:headers,observe: 'response'}).subscribe((results:any)=>{
+          resolve(this.convertResults(results));
+        },(error)=>{
+          reject(this.convertError(error))
+        })
+      })
     }
   }
   /**
@@ -202,6 +234,15 @@ export class HttpWrapperProvider {
   delete(url: string, parameters: any, headers: any): Promise<HTTPResponse>{
     if(this.isApp){
       return this.httpNative.delete(url, parameters, headers);
+    }else{
+      return new Promise<HTTPResponse>((resolve, reject) => {
+        headers["Authorization"] = this.getBasicAuthHeader(this.username, this.password)["Authorization"];
+        this.http.delete(url,{headers:headers,observe: 'response',params:parameters}).subscribe((results:any)=>{
+          resolve(this.convertResults(results));
+        },(error)=>{
+          reject(this.convertError(error))
+        })
+      })
     }
   }
   /**
@@ -214,6 +255,15 @@ export class HttpWrapperProvider {
   head(url: string, parameters: any, headers: any): Promise<HTTPResponse>{
     if(this.isApp){
       return this.httpNative.head(url, parameters, headers);
+    }else{
+      return new Promise<HTTPResponse>((resolve, reject) => {
+        headers["Authorization"] = this.getBasicAuthHeader(this.username, this.password)["Authorization"];
+        this.http.head(url,{headers:headers,observe: 'response',params:parameters}).subscribe((results:any)=>{
+          resolve(this.convertResults(results));
+        },(error)=>{
+          reject(this.convertError(error))
+        })
+      })
     }
   }
   /**
@@ -228,6 +278,10 @@ export class HttpWrapperProvider {
   uploadFile(url: string, body: any, headers: any, filePath: string, name: string): Promise<HTTPResponse>{
     if(this.isApp){
       return this.httpNative.uploadFile(url, body, headers, filePath, name);
+    }else{
+      return new Promise<HTTPResponse>((resolve, reject) => {
+        //TODO add upload logic
+      })
     }
   }
   /**
@@ -241,6 +295,8 @@ export class HttpWrapperProvider {
   downloadFile(url: string, body: any, headers: any, filePath: string): Promise<HTTPResponse>{
     if(this.isApp){
       return this.httpNative.downloadFile(url, body, headers, filePath);
+    }else{
+      //TODO add download loagic
     }
   }
 }

@@ -6,6 +6,7 @@ import { Observable } from 'rxjs/Observable';
 import { HttpClientProvider } from '../http-client/http-client';
 import { CurrentUser } from '../../models/currentUser';
 import { EncryptionProvider } from '../encryption/encryption';
+import {HttpWrapperProvider} from "../http-wrapper/http-wrapper";
 
 /*
  Generated class for the UserProvider provider.
@@ -17,7 +18,8 @@ import { EncryptionProvider } from '../encryption/encryption';
 export class UserProvider {
   constructor(
     public storage: Storage,
-    public http: HTTP,
+    /*public http: HTTP,*/
+    public http: HttpWrapperProvider,
     private httpProvider: HttpClientProvider,
     private encryptionProvider: EncryptionProvider
   ) {}
@@ -45,6 +47,7 @@ export class UserProvider {
         .get(apiurl, {}, {})
         .then(
           (data: any) => {
+            console.log("Response:",data);
             if (data.data.indexOf('login.action') > -1) {
               user.serverUrl = user.serverUrl.replace('http://', 'https://');
               this.getUserDataFromServer(user).subscribe(
@@ -113,84 +116,18 @@ export class UserProvider {
   authenticateUser(user): Observable<any> {
     this.http.useBasicAuth(user.username, user.password);
     return new Observable(observer => {
-      this.http
-        .get(user.serverUrl + '', {}, {})
-        .then((data: any) => {
-          if (data.status == 200) {
-            if (data.headers && data.headers['Set-Cookie']) {
-              let setCookieArray = data.headers['Set-Cookie'].split(';');
-              let path = '';
-              let url = '';
-              let serverUrlArray = user.serverUrl.split('/');
-              setCookieArray.forEach((value: any) => {
-                if (value.indexOf('Path=/') > -1) {
-                  let pathValues = value.split('Path=/');
-                  path = pathValues[pathValues.length - 1].split('/')[0];
-                }
-              });
-              if (serverUrlArray[serverUrlArray.length - 1] != path) {
-                url =
-                  serverUrlArray[serverUrlArray.length - 1] == ''
-                    ? user.serverUrl + path
-                    : user.serverUrl + '/' + path;
-              } else {
-                url = user.serverUrl;
-              }
-              user.serverUrl = url;
-            }
-            this.getUserDataFromServer(user).subscribe(
-              (data: any) => {
-                let url = user.serverUrl.split('/dhis-web-commons')[0];
-                url = url.split('/dhis-web-dashboard-integration')[0];
-                user.serverUrl = url;
-                observer.next({ data: data.data, user: data.user });
-                observer.complete();
-              },
-              error => {
-                observer.error(error);
-              }
-            );
-          } else {
-            observer.error(data);
-          }
-        })
-        .catch(error => {
-          if (error.status == 301 || error.status == 302) {
-            if (error.headers && error.headers.Location) {
-              user.serverUrl = error.headers.Location;
-              this.authenticateUser(user).subscribe(
-                (data: any) => {
-                  let url = user.serverUrl.split('/dhis-web-commons')[0];
-                  url = url.split('/dhis-web-dashboard-integration')[0];
-                  user.serverUrl = url;
-                  observer.next({ data: data, user: user });
-                  observer.complete();
-                },
-                error => {
-                  observer.error(error);
-                }
-              );
-            } else if (error.headers && error.headers.location) {
-              user.serverUrl = error.headers.location;
-              this.authenticateUser(user).subscribe(
-                (data: any) => {
-                  let url = user.serverUrl.split('/dhis-web-commons')[0];
-                  url = url.split('/dhis-web-dashboard-integration')[0];
-                  user.serverUrl = url;
-                  observer.next({ data: data, user: user });
-                  observer.complete();
-                },
-                error => {
-                  observer.error(error);
-                }
-              );
-            } else {
-              observer.error(error);
-            }
-          } else {
-            observer.error(error);
-          }
-        });
+      this.getUserDataFromServer(user).subscribe(
+        (data: any) => {
+          let url = user.serverUrl.split('/dhis-web-commons')[0];
+          url = url.split('/dhis-web-dashboard-integration')[0];
+          user.serverUrl = url;
+          observer.next({ data: data.data, user: data.user });
+          observer.complete();
+        },
+        error => {
+          observer.error(error);
+        }
+      );
     });
   }
 

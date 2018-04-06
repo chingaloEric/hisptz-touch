@@ -16,7 +16,7 @@ export class SqlLiteProvider {
 
   public insertBatchSize: number;
 
-  constructor(/*private sqlite: SQLite*/private sqlite: SqliteWrapperProvider) {
+  constructor(private sqlite: SqliteWrapperProvider) {
     this.insertBatchSize = 100;
   }
 
