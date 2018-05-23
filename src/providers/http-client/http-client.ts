@@ -4,11 +4,15 @@ import { Http, Headers } from '@angular/http';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/timeout';
 import { Observable } from 'rxjs/Observable';
+import { ApplicationState } from '../../store/reducers/index';
+import { Store } from '@ngrx/store';
+import { getCurrentUser } from '../../store/selectors/currentUser.selectors';
 import { CurrentUser } from '../../models/currentUser';
 import { EncryptionProvider } from '../encryption/encryption';
 import * as _ from 'lodash';
 import { NetworkAvailabilityProvider } from '../network-availability/network-availability';
-import { Storage } from '@ionic/storage';
+import {HttpWrapperProvider} from "../http-wrapper/http-wrapper";
+
 /*
   Generated class for the HttpClientProvider provider.
 
@@ -19,7 +23,8 @@ import { Storage } from '@ionic/storage';
 export class HttpClientProvider {
   public timeOutTime: number;
   constructor(
-    private http: HTTP,
+    private http: HttpWrapperProvider,
+    private store: Store<ApplicationState>,
     private encryption: EncryptionProvider,
     public storage: Storage,
     private defaultHttp: Http,

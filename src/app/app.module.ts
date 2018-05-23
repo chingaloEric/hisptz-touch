@@ -42,7 +42,7 @@ import { PipesModule } from '../pipes/pipes.module';
 import { reducers, effects } from '../store';
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
-
+import { HttpClientModule } from '@angular/common/http';
 //providers
 import { HttpClientProvider } from '../providers/http-client/http-client';
 import { UserProvider } from '../providers/user/user';
@@ -80,6 +80,8 @@ import { SmsGatewayProvider } from '../providers/sms-gateway/sms-gateway';
 import { ProgramRulesProvider } from '../providers/program-rules/program-rules';
 import { SynchronizationProvider } from '../providers/synchronization/synchronization';
 import { GeolocationProvider } from '../providers/geolocation/geolocation';
+import { HttpWrapperProvider } from '../providers/http-wrapper/http-wrapper';
+import { SqliteWrapperProvider } from '../providers/sqlite-wrapper/sqlite-wrapper';
 
 @NgModule({
   declarations: [
@@ -96,6 +98,7 @@ import { GeolocationProvider } from '../providers/geolocation/geolocation';
     EffectsModule.forRoot(effects),
     IonicModule.forRoot(MyApp),
     HttpModule,
+    HttpClientModule,
     IonicStorageModule.forRoot(),
     TranslateModule.forRoot({
       loader: {
@@ -165,7 +168,9 @@ import { GeolocationProvider } from '../providers/geolocation/geolocation';
     EncryptionProvider,
     ProgramRulesProvider,
     SynchronizationProvider,
-    GeolocationProvider
+    GeolocationProvider,
+    HttpWrapperProvider,
+    SqliteWrapperProvider
   ]
 })
 export class AppModule {}

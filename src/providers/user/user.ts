@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage';
 import 'rxjs/add/operator/map';
-import { HTTP } from '@ionic-native/http';
 import { Observable } from 'rxjs/Observable';
 import { HttpClientProvider } from '../http-client/http-client';
 import { CurrentUser } from '../../models/currentUser';
 import { EncryptionProvider } from '../encryption/encryption';
+import {HttpWrapperProvider} from "../http-wrapper/http-wrapper";
+import { Platform } from 'ionic-angular';
 
 /*
  Generated class for the UserProvider provider.
@@ -15,12 +16,21 @@ import { EncryptionProvider } from '../encryption/encryption';
  */
 @Injectable()
 export class UserProvider {
+  isApp
   constructor(
     public storage: Storage,
-    public http: HTTP,
+    /*public http: HTTP,*/
+    public http: HttpWrapperProvider,
     private httpProvider: HttpClientProvider,
-    private encryptionProvider: EncryptionProvider
-  ) {}
+    private encryptionProvider: EncryptionProvider,
+    public platform: Platform
+  ) {
+    if(this.platform.is('core') || this.platform.is('mobileweb')) {
+      this.isApp = false;
+    } else {
+      this.isApp = true;
+    }
+  }
 
   /**
    *
@@ -45,21 +55,26 @@ export class UserProvider {
         .get(apiurl, {}, {})
         .then(
           (data: any) => {
-            if (data.data.indexOf('login.action') > -1) {
-              user.serverUrl = user.serverUrl.replace('http://', 'https://');
-              this.getUserDataFromServer(user).subscribe(
-                (data: any) => {
-                  let url = user.serverUrl.split('/dhis-web-commons')[0];
-                  url = url.split('/dhis-web-dashboard')[0];
-                  user.serverUrl = url;
-                  observer.next({ data: data.data, user: user });
-                  observer.complete();
-                },
-                error => {
-                  observer.error(error);
-                }
-              );
-            } else {
+            if(this.isApp){
+              if (data.data.indexOf('login.action') > -1) {
+                user.serverUrl = user.serverUrl.replace('http://', 'https://');
+                this.getUserDataFromServer(user).subscribe(
+                  (data: any) => {
+                    let url = user.serverUrl.split('/dhis-web-commons')[0];
+                    url = url.split('/dhis-web-dashboard')[0];
+                    user.serverUrl = url;
+                    observer.next({ data: data.data, user: user });
+                    observer.complete();
+                  },
+                  error => {
+                    observer.error(error);
+                  }
+                );
+              } else {
+                observer.next({ data: data.data, user: user });
+                observer.complete();
+              }
+            }else{
               observer.next({ data: data.data, user: user });
               observer.complete();
             }
@@ -113,90 +128,38 @@ export class UserProvider {
   authenticateUser(user): Observable<any> {
     this.http.useBasicAuth(user.username, user.password);
     return new Observable(observer => {
-      this.http
-        .get(user.serverUrl + '', {}, {})
-        .then((data: any) => {
-          if (data.status == 200) {
-            if (data.headers && data.headers['Set-Cookie']) {
-              let setCookieArray = data.headers['Set-Cookie'].split(';');
-              let path = '';
-              let url = '';
-              let serverUrlArray = user.serverUrl.split('/');
-              setCookieArray.forEach((value: any) => {
-                if (value.indexOf('Path=/') > -1) {
-                  let pathValues = value.split('Path=/');
-                  path = pathValues[pathValues.length - 1].split('/')[0];
-                }
-              });
-              if (serverUrlArray[serverUrlArray.length - 1] != path) {
-                url =
-                  serverUrlArray[serverUrlArray.length - 1] == ''
-                    ? user.serverUrl + path
-                    : user.serverUrl + '/' + path;
-              } else {
-                url = user.serverUrl;
-              }
-              user.serverUrl = url;
-            }
-            this.getUserDataFromServer(user).subscribe(
-              (data: any) => {
-                let url = user.serverUrl.split('/dhis-web-commons')[0];
-                url = url.split('/dhis-web-dashboard')[0];
-                user.serverUrl = url;
-                observer.next({ data: data.data, user: data.user });
-                observer.complete();
-              },
-              error => {
-                const serverUrl = user.serverUrl;
-                const dhisInstanceName = serverUrl.split('/').pop();
-                //for other possible instances such as dev, demo
-                if (dhisInstanceName != 'dhis') {
-                  user.serverUrl = serverUrl + '/dhis';
-                  this.authenticateUser(user).subscribe(
-                    (data: any) => {
-                      let url = user.serverUrl.split('/dhis-web-commons')[0];
-                      url = url.split('/dhis-web-dashboard')[0];
-                      user.serverUrl = url;
-                      observer.next({ data: data, user: user });
-                      observer.complete();
-                    },
-                    error => {
-                      observer.error(error);
-                    }
-                  );
+      if(this.isApp){
+        this.http
+          .get(user.serverUrl + '', {}, {})
+          .then((data: any) => {
+            if (data.status == 200) {
+              if (data.headers && data.headers['Set-Cookie']) {
+                let setCookieArray = data.headers['Set-Cookie'].split(';');
+                let path = '';
+                let url = '';
+                let serverUrlArray = user.serverUrl.split('/');
+                setCookieArray.forEach((value: any) => {
+                  if (value.indexOf('Path=/') > -1) {
+                    let pathValues = value.split('Path=/');
+                    path = pathValues[pathValues.length - 1].split('/')[0];
+                  }
+                });
+                if (serverUrlArray[serverUrlArray.length - 1] != path) {
+                  url =
+                    serverUrlArray[serverUrlArray.length - 1] == ''
+                      ? user.serverUrl + path
+                      : user.serverUrl + '/' + path;
                 } else {
-                  observer.error(error);
+                  url = user.serverUrl;
                 }
+                user.serverUrl = url;
               }
-            );
-          } else {
-            observer.error(data);
-          }
-        })
-        .catch(error => {
-          if (error.status == 301 || error.status == 302) {
-            if (error.headers && error.headers.Location) {
-              user.serverUrl = error.headers.Location;
-              this.authenticateUser(user).subscribe(
+              this.getUserDataFromServer(user).subscribe(
                 (data: any) => {
                   let url = user.serverUrl.split('/dhis-web-commons')[0];
-                  url = url.split('/dhis-web-dashboard')[0];
+                  url = url.split('/dhis-web-dashboard-integration')[0];
                   user.serverUrl = url;
-                  observer.next({ data: data, user: user });
-                  observer.complete();
-                },
-                error => {
-                  observer.error(error);
-                }
-              );
-            } else if (error.headers && error.headers.location) {
-              user.serverUrl = error.headers.location;
-              this.authenticateUser(user).subscribe(
-                (data: any) => {
-                  let url = user.serverUrl.split('/dhis-web-commons')[0];
-                  url = url.split('/dhis-web-dashboard')[0];
-                  user.serverUrl = url;
-                  observer.next({ data: data, user: user });
+                  observer.next({ data: data.data, user: data.user });
                   observer.complete();
                 },
                 error => {
@@ -204,12 +167,60 @@ export class UserProvider {
                 }
               );
             } else {
+              observer.error(data);
+            }
+          })
+          .catch(error => {
+            if (error.status == 301 || error.status == 302) {
+              if (error.headers && error.headers.Location) {
+                user.serverUrl = error.headers.Location;
+                this.authenticateUser(user).subscribe(
+                  (data: any) => {
+                    let url = user.serverUrl.split('/dhis-web-commons')[0];
+                    url = url.split('/dhis-web-dashboard-integration')[0];
+                    user.serverUrl = url;
+                    observer.next({ data: data, user: user });
+                    observer.complete();
+                  },
+                  error => {
+                    observer.error(error);
+                  }
+                );
+              } else if (error.headers && error.headers.location) {
+                user.serverUrl = error.headers.location;
+                this.authenticateUser(user).subscribe(
+                  (data: any) => {
+                    let url = user.serverUrl.split('/dhis-web-commons')[0];
+                    url = url.split('/dhis-web-dashboard-integration')[0];
+                    user.serverUrl = url;
+                    observer.next({ data: data, user: user });
+                    observer.complete();
+                  },
+                  error => {
+                    observer.error(error);
+                  }
+                );
+              } else {
+                observer.error(error);
+              }
+            } else {
               observer.error(error);
             }
-          } else {
+          });
+      }else{
+        this.getUserDataFromServer(user).subscribe(
+          (data: any) => {
+            let url = user.serverUrl.split('/dhis-web-commons')[0];
+            url = url.split('/dhis-web-dashboard-integration')[0];
+            user.serverUrl = url;
+            observer.next({ data: data.data, user: data.user });
+            observer.complete();
+          },
+          error => {
             observer.error(error);
           }
-        });
+        );
+      }
     });
   }
 

@@ -1,8 +1,9 @@
-import { Injectable } from '@angular/core';
-import { SQLite, SQLiteObject } from '@ionic-native/sqlite';
+import {Injectable} from '@angular/core';
+import {SQLite, SQLiteObject} from '@ionic-native/sqlite';
 import 'rxjs/add/operator/map';
-import { DATABASE_STRUCTURE } from '../../models/database';
-import { Observable } from 'rxjs/Observable';
+import {DATABASE_STRUCTURE} from "../../models/database";
+import {Observable} from "rxjs/Observable";
+import {SqliteWrapperProvider} from "../sqlite-wrapper/sqlite-wrapper";
 
 /*
   Generated class for the SqlLiteProvider provider.
@@ -14,7 +15,7 @@ import { Observable } from 'rxjs/Observable';
 export class SqlLiteProvider {
   public insertBatchSize: number;
 
-  constructor(private sqlite: SQLite) {
+  constructor(private sqlite: SqliteWrapperProvider) {
     this.insertBatchSize = 100;
   }
 
@@ -100,6 +101,7 @@ export class SqlLiteProvider {
         });
     });
   }
+
 
   /**
    *
@@ -491,3 +493,4 @@ export class SqlLiteProvider {
     return data;
   }
 }
+
