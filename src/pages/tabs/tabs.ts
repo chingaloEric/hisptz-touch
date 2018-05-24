@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { BackgroundMode } from '@ionic-native/background-mode';
 import { UserProvider } from '../../providers/user/user';
+import * as _ from 'lodash';
 
 import { AppsPage } from '../apps/apps';
 import { AccountPage } from '../account/account';
@@ -36,13 +37,12 @@ export class TabsPage {
   }
 
   setUserAccountName(userData) {
-    let newValue = '';
     if (userData && userData.Name) {
       let nameList = userData.Name.split(' ');
-      nameList.forEach(name => {
-        newValue += name.charAt(0).toUpperCase();
-      });
-      this.accountName = newValue;
+      const firstName = nameList[0]
+      if (firstName) {
+        this.accountName = _.capitalize(firstName);
+      }
     }
   }
 }

@@ -28,16 +28,16 @@ export class ProfileProvider {
       },
       {
         id: 'orgUnits',
-        name: 'Assigned organisation units',
+        name: 'Assigned Geographical areas',
         icon: 'assets/icon/orgUnit.png'
       },
-      { id: 'roles', name: 'Assigned roles', icon: 'assets/icon/roles.png' },
-      {
-        id: 'program',
-        name: 'Assigned programs',
-        icon: 'assets/icon/program.png'
-      },
-      { id: 'form', name: 'Assigned entry forms', icon: 'assets/icon/form.png' }
+      // { id: 'roles', name: 'Assigned roles', icon: 'assets/icon/roles.png' },
+      // {
+      //   id: 'program',
+      //   name: 'Assigned programs',
+      //   icon: 'assets/icon/program.png'
+      // },
+      // { id: 'form', name: 'Assigned entry forms', icon: 'assets/icon/form.png' }
     ];
     return profileContents;
   }

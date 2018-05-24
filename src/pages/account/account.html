@@ -24,25 +24,6 @@
           <p class="menu-app" [translate]="'Profile'"></p>
         </div>
       </ion-col>
-      <ion-col [ngClass]="animationEffect.about" col-4 (tap)="goToView('about')">
-        <div class="apps-contents" padding>
-          <ion-thumbnail>
-            <img class="menu-app-icon-list" src="assets/icon/about.png">
-          </ion-thumbnail>
-          <p class="menu-app" [translate]="'About'"></p>
-        </div>
-      </ion-col>
-      <ion-col [ngClass]="animationEffect.help" col-4 (tap)="goToView('help')">
-        <div class="apps-contents" padding>
-          <ion-thumbnail>
-            <img class="menu-app-icon-list" src="assets/icon/help.png">
-          </ion-thumbnail>
-          <p class="menu-app" [translate]="'Help'"></p>
-        </div>
-      </ion-col>
-    </ion-row>
-
-    <ion-row class="animated fadeIn">
       <ion-col [ngClass]="animationEffect.logout" col-4 (tap)="logOut()">
         <div class="apps-contents" padding>
           <ion-thumbnail>
@@ -51,7 +32,6 @@
           <p class="menu-app" [translate]="'Log out'"></p>
         </div>
       </ion-col>
-
     </ion-row>
   </ion-grid>
 

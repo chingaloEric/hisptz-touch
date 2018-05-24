@@ -36,14 +36,14 @@ export class SyncProvider {
 
   getSyncContentDetails() {
     let syncContents = [
-      {
-        id: 'dataViaSms',
-        name: 'Upload data via SMS',
-        icon: 'assets/icon/sms.png'
-      },
+      // {
+      //   id: 'dataViaSms',
+      //   name: 'Upload data via SMS',
+      //   icon: 'assets/icon/sms.png'
+      // },
       {
         id: 'dataViaInternet',
-        name: 'Upload data via internet',
+        name: 'Upload data',
         icon: 'assets/icon/internet.png'
       },
       {
@@ -52,16 +52,16 @@ export class SyncProvider {
         icon: 'assets/icon/download-metadata.png'
       },
       //{id : 'downloadData',name : 'Download data',icon: 'assets/icon/download-data.png'},
-      {
-        id: 'clearData',
-        name: 'Clear local data',
-        icon: 'assets/icon/clear-data.png'
-      },
-      {
-        id: 'clearMetadata',
-        name: 'Clear local metadata',
-        icon: 'assets/icon/clear-metadata.png'
-      }
+      // {
+      //   id: 'clearData',
+      //   name: 'Clear local data',
+      //   icon: 'assets/icon/clear-data.png'
+      // },
+      // {
+      //   id: 'clearMetadata',
+      //   name: 'Clear local metadata',
+      //   icon: 'assets/icon/clear-metadata.png'
+      // }
     ];
     return syncContents;
   }

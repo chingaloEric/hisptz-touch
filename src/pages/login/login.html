@@ -6,12 +6,12 @@
         <div class="logo">
           <img [src]="logoUrl">
         </div>
-        <p [translate]="'Welcome to LMU e-Checklist'"></p>
+        <h5 class="title" [translate]="'Welcome to LMU e-Checklist'"></h5>
       </ion-col>
     </ion-row>
     <ion-row *ngIf="isLoginProcessActive">
       <ion-col [ngClass]="animationEffect.progressBar">
-        <progress-bar [progressBarTitle]="loggedInInInstance" [progressBar]="progressBar" (isProcessActive)="cancelLoginProcess($event)">
+        <progress-bar [progressBarTitle]="'Establishing connection and loading contents'" [progressBar]="progressBar" (isProcessActive)="cancelLoginProcess($event)">
         </progress-bar>
       </ion-col>
     </ion-row>
@@ -29,71 +29,71 @@
             </ion-item>
           </ion-list>
         </div>
-        <div *ngIf="isNetworkAvailable">
-          <ion-list>
-            <ion-item>
-              <div style="text-align: center" item-left>
-                <div *ngIf="progressTracker.communication.totalPassedProcesses == progressTracker.communication.expectedProcesses">
-                  <ion-icon name="done-all" color="favorite"></ion-icon>
-                </div>
-                <div *ngIf="progressTracker.communication.totalPassedProcesses != progressTracker.communication.expectedProcesses">
-                  <loading loadingSize="small"></loading>
-                </div>
-              </div>
-              <span text-wrap *ngIf="progressTracker.communication.message !=''" [translate]="progressTracker.communication.message"></span>
-              <span text-wrap *ngIf="progressTracker.communication.message ==''" [translate]="'Establishing connection to server'"></span>
-              <div style="text-align: center" item-right>
-                {{ progressTracker.communication.totalPassedProcesses}}/{{ progressTracker.communication.expectedProcesses}}
-              </div>
-            </ion-item>
-            <ion-item>
-              <div style="text-align: center" item-left>
-                <div *ngIf="progressTracker.entryForm.totalPassedProcesses == progressTracker.entryForm.expectedProcesses">
-                  <ion-icon name="done-all" color="favorite"></ion-icon>
-                </div>
-                <div *ngIf="hasUserAuthenticated && progressTracker.entryForm.totalPassedProcesses != progressTracker.entryForm.expectedProcesses ">
-                  <loading loadingSize="small"></loading>
-                </div>
-              </div>
-              <span text-wrap *ngIf="progressTracker.entryForm.message !=''" [translate]="progressTracker.entryForm.message"></span>
-              <span text-wrap *ngIf="progressTracker.entryForm.message ==''" [translate]="'Aggregate metadata'"></span>
-              <div style="text-align: center" item-right>
-                {{ progressTracker.entryForm.totalPassedProcesses}}/{{ progressTracker.entryForm.expectedProcesses}}
-              </div>
-            </ion-item>
-            <ion-item>
-              <div style="text-align: center" item-left>
-                <div *ngIf="progressTracker.event.totalPassedProcesses == progressTracker.event.expectedProcesses">
-                  <ion-icon name="done-all" color="favorite"></ion-icon>
-                </div>
-                <div *ngIf="hasUserAuthenticated && progressTracker.event.totalPassedProcesses != progressTracker.event.expectedProcesses">
-                  <loading loadingSize="small"></loading>
-                </div>
-              </div>
-              <span text-wrap *ngIf="progressTracker.event.message !=''" [translate]="progressTracker.event.message"></span>
-              <span text-wrap *ngIf="progressTracker.event.message ==''" [translate]="'Event and tracker metadata'">
-              </span>
-              <div style="text-align: center" item-right>
-                {{ progressTracker.event.totalPassedProcesses}}/{{ progressTracker.event.expectedProcesses}}
-              </div>
-            </ion-item>
-            <ion-item>
-              <div style="text-align: center" item-left>
-                <div *ngIf="progressTracker.report.totalPassedProcesses == progressTracker.report.expectedProcesses">
-                  <ion-icon name="done-all" color="favorite"></ion-icon>
-                </div>
-                <div *ngIf="hasUserAuthenticated && progressTracker.report.totalPassedProcesses != progressTracker.report.expectedProcesses">
-                  <loading loadingSize="small"></loading>
-                </div>
-              </div>
-              <span text-wrap *ngIf="progressTracker.report.message !=''" [translate]="progressTracker.report.message"></span>
-              <span text-wrap *ngIf="progressTracker.report.message ==''" [translate]="'Reports metadata'"></span>
-              <div style="text-align: center" item-right>
-                {{ progressTracker.report.totalPassedProcesses}}/{{ progressTracker.report.expectedProcesses}}
-              </div>
-            </ion-item>
-          </ion-list>
-        </div>
+        <!--<div *ngIf="isNetworkAvailable">-->
+          <!--<ion-list>-->
+            <!--<ion-item>-->
+              <!--<div style="text-align: center" item-left>-->
+                <!--<div *ngIf="progressTracker.communication.totalPassedProcesses == progressTracker.communication.expectedProcesses">-->
+                  <!--<ion-icon name="done-all" color="favorite"></ion-icon>-->
+                <!--</div>-->
+                <!--<div *ngIf="progressTracker.communication.totalPassedProcesses != progressTracker.communication.expectedProcesses">-->
+                  <!--<loading loadingSize="small"></loading>-->
+                <!--</div>-->
+              <!--</div>-->
+              <!--<span text-wrap *ngIf="progressTracker.communication.message !=''" [translate]="progressTracker.communication.message"></span>-->
+              <!--<span text-wrap *ngIf="progressTracker.communication.message ==''" [translate]="'Establishing connection to server'"></span>-->
+              <!--<div style="text-align: center" item-right>-->
+                <!--{{ progressTracker.communication.totalPassedProcesses}}/{{ progressTracker.communication.expectedProcesses}}-->
+              <!--</div>-->
+            <!--</ion-item>-->
+            <!--<ion-item>-->
+              <!--<div style="text-align: center" item-left>-->
+                <!--<div *ngIf="progressTracker.entryForm.totalPassedProcesses == progressTracker.entryForm.expectedProcesses">-->
+                  <!--<ion-icon name="done-all" color="favorite"></ion-icon>-->
+                <!--</div>-->
+                <!--<div *ngIf="hasUserAuthenticated && progressTracker.entryForm.totalPassedProcesses != progressTracker.entryForm.expectedProcesses ">-->
+                  <!--<loading loadingSize="small"></loading>-->
+                <!--</div>-->
+              <!--</div>-->
+              <!--<span text-wrap *ngIf="progressTracker.entryForm.message !=''" [translate]="progressTracker.entryForm.message"></span>-->
+              <!--<span text-wrap *ngIf="progressTracker.entryForm.message ==''" [translate]="'Aggregate metadata'"></span>-->
+              <!--<div style="text-align: center" item-right>-->
+                <!--{{ progressTracker.entryForm.totalPassedProcesses}}/{{ progressTracker.entryForm.expectedProcesses}}-->
+              <!--</div>-->
+            <!--</ion-item>-->
+            <!--<ion-item>-->
+              <!--<div style="text-align: center" item-left>-->
+                <!--<div *ngIf="progressTracker.event.totalPassedProcesses == progressTracker.event.expectedProcesses">-->
+                  <!--<ion-icon name="done-all" color="favorite"></ion-icon>-->
+                <!--</div>-->
+                <!--<div *ngIf="hasUserAuthenticated && progressTracker.event.totalPassedProcesses != progressTracker.event.expectedProcesses">-->
+                  <!--<loading loadingSize="small"></loading>-->
+                <!--</div>-->
+              <!--</div>-->
+              <!--<span text-wrap *ngIf="progressTracker.event.message !=''" [translate]="progressTracker.event.message"></span>-->
+              <!--<span text-wrap *ngIf="progressTracker.event.message ==''" [translate]="'Event and tracker metadata'">-->
+              <!--</span>-->
+              <!--<div style="text-align: center" item-right>-->
+                <!--{{ progressTracker.event.totalPassedProcesses}}/{{ progressTracker.event.expectedProcesses}}-->
+              <!--</div>-->
+            <!--</ion-item>-->
+            <!--<ion-item>-->
+              <!--<div style="text-align: center" item-left>-->
+                <!--<div *ngIf="progressTracker.report.totalPassedProcesses == progressTracker.report.expectedProcesses">-->
+                  <!--<ion-icon name="done-all" color="favorite"></ion-icon>-->
+                <!--</div>-->
+                <!--<div *ngIf="hasUserAuthenticated && progressTracker.report.totalPassedProcesses != progressTracker.report.expectedProcesses">-->
+                  <!--<loading loadingSize="small"></loading>-->
+                <!--</div>-->
+              <!--</div>-->
+              <!--<span text-wrap *ngIf="progressTracker.report.message !=''" [translate]="progressTracker.report.message"></span>-->
+              <!--<span text-wrap *ngIf="progressTracker.report.message ==''" [translate]="'Reports metadata'"></span>-->
+              <!--<div style="text-align: center" item-right>-->
+                <!--{{ progressTracker.report.totalPassedProcesses}}/{{ progressTracker.report.expectedProcesses}}-->
+              <!--</div>-->
+            <!--</ion-item>-->
+          <!--</ion-list>-->
+        <!--</div>-->
       </ion-col>
     </ion-row>
 
@@ -141,7 +141,7 @@
 
           <ion-row>
             <ion-col>
-              <button type="submit" class="normalButton" ion-button full text-capitalize>
+              <button type="submit" class="normalButton" ion-button outline color="whitecolor" text-capitalize>
                 <span [translate]="'Login'"></span>
               </button>
             </ion-col>

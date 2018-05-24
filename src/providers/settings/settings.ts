@@ -18,13 +18,13 @@ export class SettingsProvider {
    */
   getSettingContentDetails() {
     let settingContents = [
-      {
-        id: 'appSettings',
-        name: 'App settings',
-        icon: 'assets/icon/app-setting.png',
-        isLoading: false,
-        loadingMessage: ''
-      },
+      // {
+      //   id: 'appSettings',
+      //   name: 'App settings',
+      //   icon: 'assets/icon/app-setting.png',
+      //   isLoading: false,
+      //   loadingMessage: ''
+      // },
       {
         id: 'entryForm',
         name: 'Entry form',
@@ -138,7 +138,7 @@ export class SettingsProvider {
       entryForm: {
         label: 'formName',
         maxDataElementOnDefaultForm: 10,
-        formLayout: 'tableLayout',
+        formLayout: 'customLayout',
         showAlertOnFormAssignement: true,
         shouldDisplayAsRadio: true
       },
