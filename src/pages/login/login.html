@@ -6,7 +6,7 @@
         <div class="logo">
           <img [src]="logoUrl">
         </div>
-        <p [translate]="'Innovation in every dimension'"></p>
+        <p [translate]="'Welcome to LMU e-Checklist'"></p>
       </ion-col>
     </ion-row>
     <ion-row *ngIf="isLoginProcessActive">
@@ -124,7 +124,7 @@
           <ion-row>
             <ion-col>
               <div class="round-form-container">
-                <ion-item>
+                <ion-item [hidden]="true">
                   <ion-input [(ngModel)]="currentUser.serverUrl" type="text" name="serverUrl" placeholder="{{'Enter server address'|translate}}"></ion-input>
                 </ion-item>
 
@@ -158,30 +158,6 @@
         </div>
       </div>
     </div>
-    <ion-row>
-      <ion-col class="bottomSLogan">
-        <p>
-          <span class="translation-codes">
-            <span *ngFor="let code of topThreeTranslationCodes; let currentIndex = index">
-              <span (click)="updateTranslationLanguage(code)" [ngClass]="(currentLanguage == code) ?'currentLang' : ''">{{ code }}</span>
-              <span *ngIf="currentIndex < 2">&nbsp;|&nbsp;</span>
-            </span>
-            <span *ngIf="topThreeTranslationCodes.indexOf(currentLanguage) == -1">
-              &nbsp;|&nbsp;
-              <span (click)="updateTranslationLanguage(currentLanguage)" [ngClass]="'currentLang'">{{ currentLanguage }}</span>
-            </span>
-            <span (click)="toggleTransalationCodesSelectionList()">
-              &nbsp;
-              <ion-icon name="ios-more"></ion-icon>
-            </span>
-          </span>
-        </p>
-        <p>
-          <span class="bottom-sLogan-title">
-            <span [translate]="'Powered by'"></span> HISPTZ </span>
-        </p>
-      </ion-col>
-    </ion-row>
   </ion-grid>
 
 
