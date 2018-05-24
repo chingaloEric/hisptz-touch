@@ -139,7 +139,7 @@ export class SettingsProvider {
         label: 'formName',
         maxDataElementOnDefaultForm: 10,
         formLayout: 'customLayout',
-        showAlertOnFormAssignement: true,
+        showAlertOnFormAssignement: false,
         shouldDisplayAsRadio: true
       },
       synchronization: {
