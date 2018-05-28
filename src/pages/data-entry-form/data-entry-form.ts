@@ -1,14 +1,21 @@
-import { Component,OnInit,ViewChild} from '@angular/core';
-import { NavController,NavParams,ToastController,ActionSheetController,Content,ModalController } from 'ionic-angular';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import {
+  NavController,
+  NavParams,
+  ToastController,
+  ActionSheetController,
+  Content,
+  ModalController
+} from 'ionic-angular';
 
-import {DataValues} from "../../providers/data-values";
-import {EntryForm} from "../../providers/entry-form";
-import {DataSets} from "../../providers/data-sets";
-import {NetworkAvailability} from "../../providers/network-availability";
-import {User} from "../../providers/user";
-import {Setting} from "../../providers/setting";
-import {EntryFormSectionListPage} from "../entry-form-section-list/entry-form-section-list";
-import {SettingsProvider} from "../../providers/settings";
+import { DataValues } from '../../providers/data-values';
+import { EntryForm } from '../../providers/entry-form';
+import { DataSets } from '../../providers/data-sets';
+import { NetworkAvailability } from '../../providers/network-availability';
+import { User } from '../../providers/user';
+import { Setting } from '../../providers/setting';
+import { EntryFormSectionListPage } from '../entry-form-section-list/entry-form-section-list';
+import { SettingsProvider } from '../../providers/settings';
 
 /*
   Generated class for the DataEntryForm page.
@@ -20,54 +27,59 @@ import {SettingsProvider} from "../../providers/settings";
   selector: 'page-data-entry-form',
   templateUrl: 'data-entry-form.html'
 })
-export class DataEntryForm implements OnInit{
-
-  public loadingData : boolean = false;
-  public loadingMessages : any = [];
-  public loadingMessage : string ="";
-  public currentUser : any;
-  public dataEntryFormSelectionParameter : any;
-  public selectedDataSet : any;
-  public entryFormSections : any = [];
-  public dataSetAttributeOptionCombo : any;
+export class DataEntryForm implements OnInit {
+  public loadingData: boolean = false;
+  public loadingMessages: any = [];
+  public loadingMessage: string = '';
+  public currentUser: any;
+  public dataEntryFormSelectionParameter: any;
+  public selectedDataSet: any;
+  public entryFormSections: any = [];
+  public dataSetAttributeOptionCombo: any;
   //entry form data values and storage status
-  public entryFormDataValues : any;
-  public storageStatus : any = { online :0,local : 0};
+  public entryFormDataValues: any;
+  public storageStatus: any = { online: 0, local: 0 };
   //labels
-  public selectedDataSetLabel : string = "";
-  public selectedOrganisationUnitLabel : string = "";
-  public selectedPeriodLabel : string = "";
-  public paginationLabel : string = "";
+  public selectedDataSetLabel: string = '';
+  public selectedOrganisationUnitLabel: string = '';
+  public selectedPeriodLabel: string = '';
+  public paginationLabel: string = '';
 
   //pagination controller
-  public currentPage : number ;
+  public currentPage: number;
 
   //dataSet completeness
-  public isDataSetCompleted : boolean = false;
-  public dataSetCompletenessInformation :any = {name:"",date:""};
-  public isDataSetCompletenessProcessRunning : boolean = false;
-  public dataSetCompletenessProgressMessage :string = "";
+  public isDataSetCompleted: boolean = false;
+  public dataSetCompletenessInformation: any = { name: '', date: '' };
+  public isDataSetCompletenessProcessRunning: boolean = false;
+  public dataSetCompletenessProgressMessage: string = '';
 
   //settings
-  public dataEntrySetting : any;
+  public dataEntrySetting: any;
 
   //network
-  public network : any;
+  public network: any;
 
   @ViewChild(Content) content: Content;
 
-  constructor(public modalCtrl: ModalController,public navCtrl : NavController,public params:NavParams, public toastCtrl:ToastController,
-              public user:User,public DataSets : DataSets,
-              public actionSheetCtrl: ActionSheetController,public NetworkAvailability : NetworkAvailability,
-              public entryForm:EntryForm,public Setting : Setting,
-              private settingsProvider : SettingsProvider,
-              public dataValues:DataValues) {
-
-  }
+  constructor(
+    public modalCtrl: ModalController,
+    public navCtrl: NavController,
+    public params: NavParams,
+    public toastCtrl: ToastController,
+    public user: User,
+    public DataSets: DataSets,
+    public actionSheetCtrl: ActionSheetController,
+    public NetworkAvailability: NetworkAvailability,
+    public entryForm: EntryForm,
+    public Setting: Setting,
+    private settingsProvider: SettingsProvider,
+    public dataValues: DataValues
+  ) {}
 
   ngOnInit() {
     this.network = this.NetworkAvailability.getNetWorkStatus();
-    this.user.getCurrentUser().then((user:any)=> {
+    this.user.getCurrentUser().then((user: any) => {
       this.currentUser = user;
       this.currentPage = 0;
       this.dataEntryFormSelectionParameter = this.params.get('data');
@@ -77,170 +89,288 @@ export class DataEntryForm implements OnInit{
   }
 
   ionViewDidEnter() {
-    if(this.dataEntrySetting && this.dataEntrySetting.label){
+    if (this.dataEntrySetting && this.dataEntrySetting.label) {
       this.loadEntryFormSetting();
     }
   }
 
-  loadEntryFormSetting(){
-    this.settingsProvider.getSettingsForTheApp(this.currentUser).then((appSettings: any)=>{
-      let dataEntrySettings = appSettings.entryForm;
-      if(dataEntrySettings && dataEntrySettings.label){
-        this.dataEntrySetting = dataEntrySettings;
-      }else{
-        this.dataEntrySetting = {label : "displayName",maxDataElementOnDefaultForm : 4}
-      }
-    })
+  loadEntryFormSetting() {
+    this.settingsProvider
+      .getSettingsForTheApp(this.currentUser)
+      .then((appSettings: any) => {
+        let dataEntrySettings = appSettings.entryForm;
+        if (dataEntrySettings && dataEntrySettings.label) {
+          this.dataEntrySetting = dataEntrySettings;
+        } else {
+          this.dataEntrySetting = {
+            label: 'displayName',
+            maxDataElementOnDefaultForm: 4
+          };
+        }
+      });
   }
 
-  loadDataSet(dataSetId){
+  loadDataSet(dataSetId) {
     this.loadingData = true;
-    this.loadingMessages=[];
+    this.loadingMessages = [];
     this.setLoadingMessages('Loading entry form details');
-    this.DataSets.getDataSetById(dataSetId,this.currentUser).then((dataSet : any)=>{
-      this.selectedDataSet = dataSet;
-      this.dataSetAttributeOptionCombo = this.dataValues.getDataValuesSetAttributeOptionCombo(this.dataEntryFormSelectionParameter.dataDimension,dataSet.categoryCombo.categoryOptionCombos);
-      this.setEntryFormMetaData();
-      //setting labels and loading completeness
-      this.setHeaderLabel();
-      this.setCompletenessInformation();
-    },error=>{
-      this.loadingData = false;
-      this.setToasterMessage('Fail to load organisation units : ' + JSON.stringify(error));
-    });
-  }
-
-  setEntryFormMetaData(){
-    this.setLoadingMessages('Setting Entry form');
-    this.entryForm.getEntryFormMetadata(this.selectedDataSet,this.currentUser).then((sections : any)=>{
-      this.entryFormSections = sections;
-      //setting initial label values
-      this.paginationLabel = (this.currentPage + 1) + "/"+this.entryFormSections.length;
-      this.network = this.NetworkAvailability.getNetWorkStatus();
-      if(!this.network.isAvailable){
-        this.getDataValuesFromLocalStorage();
-      }else{
-        this.setLoadingMessages('Downloading data values from server');
-        let dataSetId = this.selectedDataSet.id;
-        let orgUnitId = this.dataEntryFormSelectionParameter.orgUnit.id;
-        let period = this.dataEntryFormSelectionParameter.period.iso;
-        this.dataValues.getDataValueSetFromServer(dataSetId,period,orgUnitId,this.dataSetAttributeOptionCombo,this.currentUser)
-          .then((dataValues : any)=>{
-            if(dataValues.length > 0){
-              dataValues.forEach((dataValue)=>{
-                dataValue["period"] = this.dataEntryFormSelectionParameter.period.name;
-                dataValue["orgUnit"] = this.dataEntryFormSelectionParameter.orgUnit.name;
-              });
-              this.setLoadingMessages('Saving ' + dataValues.length + " data values from server");
-              let dataDimension = this.dataEntryFormSelectionParameter.dataDimension;
-              this.dataValues.saveDataValues(dataValues,dataSetId,period,orgUnitId,dataDimension,"synced",this.currentUser).then(()=>{
-                this.getDataValuesFromLocalStorage();
-              },error=>{
-                this.setToasterMessage('Fail to save data values from server');
-                this.getDataValuesFromLocalStorage();
-              });
-            }else{
-              this.getDataValuesFromLocalStorage();
-            }
-          },error=>{
-            this.setToasterMessage('Fail to download data values from server');
-            this.getDataValuesFromLocalStorage();
-            console.log("error : " + JSON.stringify(error));
-          });
+    this.DataSets.getDataSetById(dataSetId, this.currentUser).then(
+      (dataSet: any) => {
+        this.selectedDataSet = dataSet;
+        this.dataSetAttributeOptionCombo = this.dataValues.getDataValuesSetAttributeOptionCombo(
+          this.dataEntryFormSelectionParameter.dataDimension,
+          dataSet.categoryCombo.categoryOptionCombos
+        );
+        this.setEntryFormMetaData();
+        //setting labels and loading completeness
+        this.setHeaderLabel();
+        this.setCompletenessInformation();
+      },
+      error => {
+        this.loadingData = false;
+        this.setToasterMessage(
+          'Fail to load organisation units : ' + JSON.stringify(error)
+        );
       }
-    })
+    );
   }
 
-  getDataValuesFromLocalStorage(){
+  setEntryFormMetaData() {
+    this.setLoadingMessages('Setting Entry form');
+    this.entryForm
+      .getEntryFormMetadata(this.selectedDataSet, this.currentUser)
+      .then((sections: any) => {
+        this.entryFormSections = sections;
+        //setting initial label values
+        this.paginationLabel =
+          this.currentPage + 1 + '/' + this.entryFormSections.length;
+        this.network = this.NetworkAvailability.getNetWorkStatus();
+        if (!this.network.isAvailable) {
+          this.getDataValuesFromLocalStorage();
+        } else {
+          this.setLoadingMessages('Downloading data values from server');
+          let dataSetId = this.selectedDataSet.id;
+          let orgUnitId = this.dataEntryFormSelectionParameter.orgUnit.id;
+          let period = this.dataEntryFormSelectionParameter.period.iso;
+          this.dataValues
+            .getDataValueSetFromServer(
+              dataSetId,
+              period,
+              orgUnitId,
+              this.dataSetAttributeOptionCombo,
+              this.currentUser
+            )
+            .then(
+              (dataValues: any) => {
+                if (dataValues.length > 0) {
+                  dataValues.forEach(dataValue => {
+                    dataValue[
+                      'period'
+                    ] = this.dataEntryFormSelectionParameter.period.name;
+                    dataValue[
+                      'orgUnit'
+                    ] = this.dataEntryFormSelectionParameter.orgUnit.name;
+                  });
+                  this.setLoadingMessages(
+                    'Saving ' + dataValues.length + ' data values from server'
+                  );
+                  let dataDimension = this.dataEntryFormSelectionParameter
+                    .dataDimension;
+                  this.dataValues
+                    .saveDataValues(
+                      dataValues,
+                      dataSetId,
+                      period,
+                      orgUnitId,
+                      dataDimension,
+                      'synced',
+                      this.currentUser
+                    )
+                    .then(
+                      () => {
+                        this.getDataValuesFromLocalStorage();
+                      },
+                      error => {
+                        this.setToasterMessage(
+                          'Fail to save data values from server'
+                        );
+                        this.getDataValuesFromLocalStorage();
+                      }
+                    );
+                } else {
+                  this.getDataValuesFromLocalStorage();
+                }
+              },
+              error => {
+                this.setToasterMessage(
+                  'Fail to download data values from server'
+                );
+                this.getDataValuesFromLocalStorage();
+                console.log('error : ' + JSON.stringify(error));
+              }
+            );
+        }
+      });
+  }
+
+  getDataValuesFromLocalStorage() {
     this.setLoadingMessages('Checking data values');
     let dataSetId = this.selectedDataSet.id;
     let orgUnitId = this.dataEntryFormSelectionParameter.orgUnit.id;
     let period = this.dataEntryFormSelectionParameter.period.iso;
-    let entryFormSections  = this.entryFormSections;
+    let entryFormSections = this.entryFormSections;
     let dataDimension = this.dataEntryFormSelectionParameter.dataDimension;
 
-    this.dataValues.getAllEntryFormDataValuesFromStorage(dataSetId,period,orgUnitId,entryFormSections,dataDimension,this.currentUser).then((dataValues : any)=>{
-      this.entryFormDataValues = {};
-      this.storageStatus.local = 0;
-      this.storageStatus.online = 0;
-      dataValues.forEach((dataValue : any)=>{
-        this.entryFormDataValues[dataValue.id] = dataValue.value;
-        dataValue.status == "synced" ? this.storageStatus.online ++ :this.storageStatus.local ++;
-      });
-      this.loadingData = false;
-    },error=>{
-      this.loadingData = false;
-    });
+    this.dataValues
+      .getAllEntryFormDataValuesFromStorage(
+        dataSetId,
+        period,
+        orgUnitId,
+        entryFormSections,
+        dataDimension,
+        this.currentUser
+      )
+      .then(
+        (dataValues: any) => {
+          this.entryFormDataValues = {};
+          this.storageStatus.local = 0;
+          this.storageStatus.online = 0;
+          dataValues.forEach((dataValue: any) => {
+            this.entryFormDataValues[dataValue.id] = dataValue.value;
+            dataValue.status == 'synced'
+              ? this.storageStatus.online++
+              : this.storageStatus.local++;
+          });
+          this.loadingData = false;
+        },
+        error => {
+          this.loadingData = false;
+        }
+      );
   }
 
   //@todo update status notifications in case has failed
-  updateValues(fieldId){
-    if(this.entryFormDataValues[fieldId]){
+  updateValues(fieldId) {
+    if (this.entryFormDataValues[fieldId]) {
       let dataSetId = this.selectedDataSet.id;
       let orgUnitId = this.dataEntryFormSelectionParameter.orgUnit.id;
       let period = this.dataEntryFormSelectionParameter.period.iso;
       let dataDimension = this.dataEntryFormSelectionParameter.dataDimension;
-      let syncStatus = "not synced";
+      let syncStatus = 'not synced';
 
-      let fieldIdArray = fieldId.split("-");
-      let id = dataSetId + '-' + fieldIdArray[0] + '-' + fieldIdArray[1] + '-' + period + '-' + orgUnitId;
+      let fieldIdArray = fieldId.split('-');
+      let id =
+        dataSetId +
+        '-' +
+        fieldIdArray[0] +
+        '-' +
+        fieldIdArray[1] +
+        '-' +
+        period +
+        '-' +
+        orgUnitId;
       let newDataValue = [];
       newDataValue.push({
-        orgUnit : this.dataEntryFormSelectionParameter.orgUnit.name,
-        dataElement : fieldIdArray[0],
-        categoryOptionCombo : fieldIdArray[1],
-        value :this.entryFormDataValues[fieldId],
-        period : this.dataEntryFormSelectionParameter.period.name
+        orgUnit: this.dataEntryFormSelectionParameter.orgUnit.name,
+        dataElement: fieldIdArray[0],
+        categoryOptionCombo: fieldIdArray[1],
+        value: this.entryFormDataValues[fieldId],
+        period: this.dataEntryFormSelectionParameter.period.name
       });
-      this.dataValues.getDataValuesById(id,this.currentUser).then((dataValues : any)=>{
-        if(dataValues.length > 0){
-          if(dataValues[0].value != this.entryFormDataValues[fieldId]){
-            this.dataValues.saveDataValues(newDataValue,dataSetId,period,orgUnitId,dataDimension,syncStatus,this.currentUser).then(()=>{
-              if(this.storageStatus.online > 0 && dataValues[0].syncStatus == "synced"){
-                this.storageStatus.online --;
-                this.storageStatus.local ++;
-              }
-            },error=>{});
+      this.dataValues.getDataValuesById(id, this.currentUser).then(
+        (dataValues: any) => {
+          if (dataValues.length > 0) {
+            if (dataValues[0].value != this.entryFormDataValues[fieldId]) {
+              this.dataValues
+                .saveDataValues(
+                  newDataValue,
+                  dataSetId,
+                  period,
+                  orgUnitId,
+                  dataDimension,
+                  syncStatus,
+                  this.currentUser
+                )
+                .then(
+                  () => {
+                    if (
+                      this.storageStatus.online > 0 &&
+                      dataValues[0].syncStatus == 'synced'
+                    ) {
+                      this.storageStatus.online--;
+                      this.storageStatus.local++;
+                    }
+                  },
+                  error => {}
+                );
+            }
+          } else {
+            this.dataValues
+              .saveDataValues(
+                newDataValue,
+                dataSetId,
+                period,
+                orgUnitId,
+                dataDimension,
+                syncStatus,
+                this.currentUser
+              )
+              .then(
+                () => {
+                  this.storageStatus.local++;
+                },
+                error => {}
+              );
           }
-        }else{
-          this.dataValues.saveDataValues(newDataValue,dataSetId,period,orgUnitId,dataDimension,syncStatus,this.currentUser).then(()=>{
-            this.storageStatus.local ++;
-          },error=>{});
-        }
-      },error =>{});
+        },
+        error => {}
+      );
     }
   }
 
   //@todo change usage of acton sheet to display tooltips
-  showTooltips(dataElement,categoryComboName,programStageDataElement){
-    let title = this.getDisplayName(dataElement) + (categoryComboName != 'default' ? " " +categoryComboName:"");
-    let subTitle = "";
-    if(dataElement.description){
-      title += ". Description : " + dataElement.description ;
+  showTooltips(dataElement, categoryComboName, programStageDataElement) {
+    let title =
+      this.getDisplayName(dataElement) +
+      (categoryComboName != 'default' ? ' ' + categoryComboName : '');
+    let subTitle = '';
+    if (dataElement.description) {
+      title += '. Description : ' + dataElement.description;
     }
-    subTitle += "Value Type : " +dataElement.valueType.toLocaleLowerCase().replace(/_/g," ");
-    if(dataElement.optionSet){
-      title += ". It has " +dataElement.optionSet.options.length + " options to select.";
+    subTitle +=
+      'Value Type : ' +
+      dataElement.valueType.toLocaleLowerCase().replace(/_/g, ' ');
+    if (dataElement.optionSet) {
+      title +=
+        '. It has ' +
+        dataElement.optionSet.options.length +
+        ' options to select.';
     }
     let actionSheet = this.actionSheetCtrl.create({
-      title: title,subTitle:subTitle
+      title: title,
+      subTitle: subTitle
     });
     actionSheet.present();
   }
 
-  getDisplayName(dataElement){
+  getDisplayName(dataElement) {
     let label = this.dataEntrySetting.label;
-    return (dataElement[label])? dataElement[label] :dataElement.displayName;
+    return dataElement[label] && isNaN(dataElement[label])
+      ? dataElement[label]
+      : dataElement.displayName;
   }
 
-  openEntryFormSectionList(){
+  openEntryFormSectionList() {
     this.loadingData = true;
     this.loadingMessages = [];
-    this.setLoadingMessages("Please wait");
-    let modal = this.modalCtrl.create(EntryFormSectionListPage,{entryFormSections:this.entryFormSections,currentEntryFormId : this.currentPage});
-    modal.onDidDismiss((currentEntry : any)=>{
-      if(currentEntry){
-        if(currentEntry.currentEntryFormId != this.currentPage){
+    this.setLoadingMessages('Please wait');
+    let modal = this.modalCtrl.create(EntryFormSectionListPage, {
+      entryFormSections: this.entryFormSections,
+      currentEntryFormId: this.currentPage
+    });
+    modal.onDidDismiss((currentEntry: any) => {
+      if (currentEntry) {
+        if (currentEntry.currentEntryFormId != this.currentPage) {
           this.currentPage = currentEntry.currentEntryFormId;
           this.changePagination(this.currentPage);
         }
@@ -250,54 +380,69 @@ export class DataEntryForm implements OnInit{
     modal.present();
   }
 
-  setHeaderLabel(){
+  setHeaderLabel() {
     this.selectedDataSetLabel = this.selectedDataSet.name;
     this.selectedOrganisationUnitLabel = this.dataEntryFormSelectionParameter.orgUnit.name;
     this.selectedPeriodLabel = this.dataEntryFormSelectionParameter.period.name;
   }
 
-  changePagination(page){
+  changePagination(page) {
     page = parseInt(page);
-    if(page == -1){
+    if (page == -1) {
       this.currentPage = 0;
-    }else if(page == this.entryFormSections.length){
+    } else if (page == this.entryFormSections.length) {
       this.currentPage = this.entryFormSections.length - 1;
-    }else{
+    } else {
       this.currentPage = page;
     }
-    this.paginationLabel = (this.currentPage + 1) + "/"+this.entryFormSections.length;
+    this.paginationLabel =
+      this.currentPage + 1 + '/' + this.entryFormSections.length;
     //scroll form to the top
     setTimeout(() => {
       this.content.scrollToTop(1300);
-    },200);
+    }, 200);
   }
 
-  updateDataSetCompleteness(){
+  updateDataSetCompleteness() {
     let network = this.NetworkAvailability.getNetWorkStatus();
-    if(!network.isAvailable){
+    if (!network.isAvailable) {
       this.setNotificationToasterMessage(network.message);
-    }else {
+    } else {
       this.isDataSetCompletenessProcessRunning = true;
-      this.dataSetCompletenessProgressMessage = "Please wait";
+      this.dataSetCompletenessProgressMessage = 'Please wait';
       let dataSetId = this.selectedDataSet.id;
       let orgUnitId = this.dataEntryFormSelectionParameter.orgUnit.id;
       let period = this.dataEntryFormSelectionParameter.period.iso;
       let dataDimension = this.dataEntryFormSelectionParameter.dataDimension;
-      if(this.isDataSetCompleted){
-        this.dataSetCompletenessProgressMessage = "Undo the completion of  entry form";
-        this.dataValues.unDoCompleteOnDataSetRegistrations(dataSetId,period,orgUnitId,dataDimension,this.currentUser).then(()=>{
-          this.isDataSetCompleted = !this.isDataSetCompleted;
-          this.isDataSetCompletenessProcessRunning = false;
-        },error=>{
-          this.isDataSetCompletenessProcessRunning = false;
-          this.setToasterMessage("Fail to undo complete  at moment, please try again later");
-        });
-      }else{
+      if (this.isDataSetCompleted) {
+        this.dataSetCompletenessProgressMessage =
+          'Undo the completion of  entry form';
+        this.dataValues
+          .unDoCompleteOnDataSetRegistrations(
+            dataSetId,
+            period,
+            orgUnitId,
+            dataDimension,
+            this.currentUser
+          )
+          .then(
+            () => {
+              this.isDataSetCompleted = !this.isDataSetCompleted;
+              this.isDataSetCompletenessProcessRunning = false;
+            },
+            error => {
+              this.isDataSetCompletenessProcessRunning = false;
+              this.setToasterMessage(
+                'Fail to undo complete  at moment, please try again later'
+              );
+            }
+          );
+      } else {
         let dataValues = [];
-        if(this.entryFormDataValues){
-          Object.keys(this.entryFormDataValues).forEach((fieldId:any)=>{
-            let fieldIdArray = fieldId.split("-");
-            if(this.entryFormDataValues[fieldId]){
+        if (this.entryFormDataValues) {
+          Object.keys(this.entryFormDataValues).forEach((fieldId: any) => {
+            let fieldIdArray = fieldId.split('-');
+            if (this.entryFormDataValues[fieldId]) {
               dataValues.push({
                 de: fieldIdArray[0],
                 co: fieldIdArray[1],
@@ -310,54 +455,87 @@ export class DataEntryForm implements OnInit{
             }
           });
         }
-        if(dataValues.length > 0){
-          this.dataSetCompletenessProgressMessage = "Uploading data to the server";
-          this.dataValues.uploadAllDataValuesOnCompleteForm(dataValues,this.currentUser).then((uploadResponse : any)=>{
-            this.storageStatus.local = uploadResponse.failOnUploadedDataValues;
-            this.storageStatus.online = uploadResponse.uploadedDataValues;
-            this.dataSetCompletenessProgressMessage = "Completing entry form";
-            this.dataValues.completeOnDataSetRegistrations(dataSetId,period,orgUnitId,dataDimension,this.currentUser).then((response)=>{
-              this.setCompletenessInformation();
-            },error=>{
-              this.isDataSetCompletenessProcessRunning = false;
-              this.setToasterMessage("Fail to complete at moment, please try again later");
-            });
-          },error=>{
-            this.isDataSetCompletenessProcessRunning = false;
-            this.setToasterMessage("Fail to upload data to the server");
-          });
-        }else{
-          this.setToasterMessage("You can not complete empty form");
+        if (dataValues.length > 0) {
+          this.dataSetCompletenessProgressMessage =
+            'Uploading data to the server';
+          this.dataValues
+            .uploadAllDataValuesOnCompleteForm(dataValues, this.currentUser)
+            .then(
+              (uploadResponse: any) => {
+                this.storageStatus.local =
+                  uploadResponse.failOnUploadedDataValues;
+                this.storageStatus.online = uploadResponse.uploadedDataValues;
+                this.dataSetCompletenessProgressMessage =
+                  'Completing entry form';
+                this.dataValues
+                  .completeOnDataSetRegistrations(
+                    dataSetId,
+                    period,
+                    orgUnitId,
+                    dataDimension,
+                    this.currentUser
+                  )
+                  .then(
+                    response => {
+                      this.setCompletenessInformation();
+                    },
+                    error => {
+                      this.isDataSetCompletenessProcessRunning = false;
+                      this.setToasterMessage(
+                        'Fail to complete at moment, please try again later'
+                      );
+                    }
+                  );
+              },
+              error => {
+                this.isDataSetCompletenessProcessRunning = false;
+                this.setToasterMessage('Fail to upload data to the server');
+              }
+            );
+        } else {
+          this.setToasterMessage('You can not complete empty form');
           this.isDataSetCompletenessProcessRunning = false;
         }
       }
     }
   }
 
-  setCompletenessInformation(){
+  setCompletenessInformation() {
     let dataSetId = this.selectedDataSet.id;
     let orgUnitId = this.dataEntryFormSelectionParameter.orgUnit.id;
     let period = this.dataEntryFormSelectionParameter.period.iso;
     let dataDimension = this.dataEntryFormSelectionParameter.dataDimension;
-    this.dataSetCompletenessProgressMessage = "Update entry form completion status";
-    this.dataValues.getDataSetCompletenessInfo(dataSetId,period,orgUnitId,dataDimension,this.currentUser).then((response : any)=>{
-      this.isDataSetCompleted = response.complete;
-      this.dataSetCompletenessInformation.name = response.storedBy;
-      this.dataSetCompletenessInformation.date = response.date;
-      this.isDataSetCompletenessProcessRunning = false;
-    },error=>{});
+    this.dataSetCompletenessProgressMessage =
+      'Update entry form completion status';
+    this.dataValues
+      .getDataSetCompletenessInfo(
+        dataSetId,
+        period,
+        orgUnitId,
+        dataDimension,
+        this.currentUser
+      )
+      .then(
+        (response: any) => {
+          this.isDataSetCompleted = response.complete;
+          this.dataSetCompletenessInformation.name = response.storedBy;
+          this.dataSetCompletenessInformation.date = response.date;
+          this.isDataSetCompletenessProcessRunning = false;
+        },
+        error => {}
+      );
   }
 
   ionViewDidLoad() {
     //console.log('Hello DataEntryForm Page');
   }
 
-  setLoadingMessages(message){
+  setLoadingMessages(message) {
     this.loadingMessage = message;
     this.loadingMessages.push(message);
   }
 
-  setToasterMessage(message){
+  setToasterMessage(message) {
     let toast = this.toastCtrl.create({
       message: message,
       duration: 3000
@@ -365,21 +543,20 @@ export class DataEntryForm implements OnInit{
     toast.present();
   }
 
-  setStickToasterMessage(message){
+  setStickToasterMessage(message) {
     let toast = this.toastCtrl.create({
       message: message,
-      showCloseButton : true
+      showCloseButton: true
     });
     toast.present();
   }
 
-  setNotificationToasterMessage(message){
+  setNotificationToasterMessage(message) {
     let toast = this.toastCtrl.create({
       message: message,
-      position : 'top',
+      position: 'top',
       duration: 4000
     });
     toast.present();
   }
-
 }

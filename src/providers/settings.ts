@@ -127,7 +127,7 @@ export class SettingsProvider {
   getDefaultSettings() {
     let defaultSettings = {
       entryForm: {
-        label: 'displayName',
+        label: 'formName',
         maxDataElementOnDefaultForm: 10
       },
       synchronization: {

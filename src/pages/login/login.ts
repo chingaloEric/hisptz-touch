@@ -905,6 +905,7 @@ export class LoginPage implements OnInit {
     if (!this.isLoginProcessCancelled) {
       this.loginData.isLogin = true;
       this.loginData.password = '';
+      this.reCheckingAppSetting(this.loginData);
       this.user.setCurrentUser(this.loginData).then(() => {
         this.synchronization.startSynchronization().then(() => {
           this.OrganisationUnit.resetOrganisationUnit();
