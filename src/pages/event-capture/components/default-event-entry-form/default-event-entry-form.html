@@ -4,15 +4,33 @@
       <tbody>
         <tr (click)="toggleSection(programStageSection.id)">
           <td [ngStyle]="{'background-color': '#F4F4F4'}">
-            {{ programStageSection.displayName }}
+            <div text-left>
+              <ion-row>
+                <ion-col col-11>
+                  <span ion-text [color]="isSectionOpen[programStageSection.id] ?'current' : 'font-color'">
+                    {{ programStageSection.displayName }}
+                  </span>
+                </ion-col>
+                <ion-col col-1 item>
+                  <div style="text-align: center;">
+                    <ion-icon [color]="isSectionOpen[programStageSection.id] ?'current' : 'font-color'" *ngIf="!isSectionOpen[programStageSection.id]"
+                      name="ios-arrow-down" item-right></ion-icon>
+                    <ion-icon [color]="isSectionOpen[programStageSection.id] ?'current' : 'font-color'" *ngIf="isSectionOpen[programStageSection.id]"
+                      name="ios-arrow-up" item-right></ion-icon>
+                  </div>
+                </ion-col>
+              </ion-row>
+            </div>
           </td>
         </tr>
         <tr *ngIf="programStageSection.dataElements && isSectionOpen[programStageSection.id]">
           <td>
             <div text-left>
-              <div *ngFor="let dataElement of programStageSection.dataElements;trackBy: trackByFn">
-                <event-input-container [dataElement]="dataElement" [currentUser]="currentUser" [(data)]="dataObject" [(dataValuesSavingStatusClass)]="dataValuesSavingStatusClass"
-                  (onChange)="updateData($event)"></event-input-container>
+              <div *ngIf="programStageSection.dataElements && isSectionOpen[programStageSection.id]">
+                <div *ngFor="let dataElement of programStageSection.dataElements;trackBy: trackByFn">
+                  <event-input-container [dataElement]="dataElement" [currentUser]="currentUser" [(data)]="dataObject" [(dataValuesSavingStatusClass)]="dataValuesSavingStatusClass"
+                    (onChange)="updateData($event)"></event-input-container>
+                </div>
               </div>
             </div>
           </td>
