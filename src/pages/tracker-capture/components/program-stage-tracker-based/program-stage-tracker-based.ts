@@ -33,6 +33,7 @@ export class ProgramStageTrackerBasedComponent implements OnInit, OnDestroy {
   @Input() currentWidgetIndex;
   @Input() isLastStage;
   @Output() onChange = new EventEmitter();
+  @Output() onDoneWithDataEntry = new EventEmitter();
 
   currentOrgUnit: any;
   currentProgram: any;
@@ -44,11 +45,9 @@ export class ProgramStageTrackerBasedComponent implements OnInit, OnDestroy {
   currentEvents: Array<any> = [];
   isNewEventFormOpened: boolean = false;
   currentOpenEvent: any;
-
   dataEntrySettings: any;
   columnsToDisplay: any;
   tableLayout: any;
-
   isTableRowOpened: any = {};
   canEventBeDeleted: boolean = false;
   isAddButtonDisabled: boolean = true;
@@ -65,17 +64,18 @@ export class ProgramStageTrackerBasedComponent implements OnInit, OnDestroy {
     private eventCaptureFormProvider: EventCaptureFormProvider,
     private appTranslation: AppTranslationProvider,
     private organisationUnitProvider: OrganisationUnitsProvider
-  ) {}
-
-  ngOnInit() {
+  ) {
     this.dataObjectModel = {};
     this.dataValuesSavingStatusClass = {};
     this.currentEvents = [];
-    //@todo add support of data dimensions
     this.selectedDataDimension = [];
+    this.translationMapper = {};
+  }
+
+  ngOnInit() {
+    //@todo add support of data dimensions
     this.currentOrgUnit = this.organisationUnitProvider.lastSelectedOrgUnit;
     this.currentProgram = this.programsProvider.lastSelectedProgram;
-    this.translationMapper = {};
     this.appTranslation.getTransalations(this.getValuesToTranslate()).subscribe(
       (data: any) => {
         this.translationMapper = data;
@@ -85,7 +85,6 @@ export class ProgramStageTrackerBasedComponent implements OnInit, OnDestroy {
         this.loadingCurrentUserInformation();
       }
     );
-
     this.isLoading = true;
   }
 
@@ -319,6 +318,10 @@ export class ProgramStageTrackerBasedComponent implements OnInit, OnDestroy {
     this.deleteEvent(id, title);
   }
 
+  doneWithDataEntry() {
+    this.onDoneWithDataEntry.emit({});
+  }
+
   deleteEvent(currentEventId, title?) {
     const actionSheet = this.actionSheetCtrl.create({
       title:
@@ -463,6 +466,7 @@ export class ProgramStageTrackerBasedComponent implements OnInit, OnDestroy {
       'Clearing this value results to deletion of this event, are you sure?',
       'Yes',
       'No',
+      'Done',
       'Prev',
       'Next'
     ];

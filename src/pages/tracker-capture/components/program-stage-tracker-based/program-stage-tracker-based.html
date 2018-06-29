@@ -25,6 +25,10 @@
                 <ion-row no-padding no-margin>
                   <ion-col>
                     <div float-left>
+                      <div class="item-card" float-left color="primary" (click)="doneWithDataEntry()" *ngIf="couldEventBeDeleted()" padding ion-button
+                        clear text-center text-capitalize>
+                        <ion-icon name="done-all"></ion-icon>&nbsp;&nbsp; {{translationMapper['Done']}}
+                      </div>
                       <button *ngIf="programStage.repeatable" [disabled]="isAddButtonDisabled" class="item-card" (click)="addRepeatableEvent(currentOpenEvent)"
                         color="font-color" padding-top padding-bottom ion-button clear text-center text-capitalize icon-start>
                         <ion-icon name="add" color="icon-color"></ion-icon>&nbsp;&nbsp; {{translationMapper['New event']}}
@@ -54,6 +58,10 @@
       <ion-row no-padding no-margin>
         <ion-col>
           <div float-left>
+            <div class="item-card" float-left color="primary" (click)="doneWithDataEntry()" *ngIf="couldEventBeDeleted()" padding ion-button
+              clear text-center text-capitalize>
+              <ion-icon name="done-all"></ion-icon>&nbsp;&nbsp; {{translationMapper['Done']}}
+            </div>
             <button *ngIf="programStage.repeatable" [disabled]="isAddButtonDisabled" class="item-card" (click)="addRepeatableEvent(currentOpenEvent)"
               color="font-color" padding-top padding-bottom ion-button clear text-center text-capitalize icon-start>
               <ion-icon name="add" color="icon-color"></ion-icon>&nbsp;&nbsp; {{translationMapper['New event']}}
